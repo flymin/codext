@@ -18,8 +18,8 @@ use crate::app_server_session::AppServerSession;
 use crate::app_server_session::AppServerStartedThread;
 use crate::app_server_session::account_state_from_get_account_response;
 use crate::app_server_session::app_server_rate_limit_snapshots;
-use crate::bottom_pane::AppLinkViewParams;
 use crate::auth_watch::AuthWatch;
+use crate::bottom_pane::AppLinkViewParams;
 use crate::bottom_pane::ApprovalRequest;
 use crate::bottom_pane::FeedbackAudience;
 use crate::bottom_pane::McpServerElicitationFormRequest;
@@ -139,7 +139,6 @@ use codex_models_manager::model_presets::HIDE_GPT5_1_MIGRATION_PROMPT_CONFIG;
 use codex_otel::SessionTelemetry;
 use codex_protocol::ThreadId;
 use codex_protocol::account::PlanType;
-use codex_protocol::approvals::ExecApprovalRequestEvent;
 use codex_protocol::config_types::Personality;
 #[cfg(target_os = "windows")]
 use codex_protocol::config_types::WindowsSandboxLevel;
@@ -668,9 +667,11 @@ impl App {
                 );
                 if identity_changed {
                     self.chat_widget.handle_auth_identity_changed();
-                    self.chat_widget.add_to_history(history_cell::new_warning_event(
-                        auth_change_message(&previous_identity, &next_identity),
-                    ));
+                    self.chat_widget
+                        .add_to_history(history_cell::new_warning_event(auth_change_message(
+                            &previous_identity,
+                            &next_identity,
+                        )));
                 }
                 self.chat_widget.on_auth_reload_completed(identity_changed);
             }
@@ -678,9 +679,10 @@ impl App {
                 if attempt < AUTH_RELOAD_MAX_ATTEMPTS {
                     self.schedule_auth_reload_retry(attempt.saturating_add(1));
                 } else {
-                    self.chat_widget.add_to_history(history_cell::new_warning_event(
-                        format!("Failed to reload auth.json after {attempt} attempts: {err}"),
-                    ));
+                    self.chat_widget
+                        .add_to_history(history_cell::new_warning_event(format!(
+                            "Failed to reload auth.json after {attempt} attempts: {err}"
+                        )));
                     self.chat_widget.request_redraw();
                 }
             }

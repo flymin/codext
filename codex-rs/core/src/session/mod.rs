@@ -1177,9 +1177,8 @@ impl Session {
         self.send_event_raw(Event {
             id: sub_id.to_string(),
             msg: EventMsg::Warning(WarningEvent {
-                message:
-                    "AGENTS.md instructions changed. Reloaded and applied starting this turn."
-                        .to_string(),
+                message: "AGENTS.md instructions changed. Reloaded and applied starting this turn."
+                    .to_string(),
             }),
         })
         .await;

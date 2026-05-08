@@ -688,7 +688,8 @@ impl App {
                 self.clear_thread_goal(app_server, thread_id).await;
             }
             AppEvent::AuthFileChanged => {
-                self.handle_auth_file_changed(app_server, /*attempt*/ 1).await;
+                self.handle_auth_file_changed(app_server, /*attempt*/ 1)
+                    .await;
             }
             AppEvent::AuthFileChangedRetry { attempt } => {
                 self.handle_auth_file_changed(app_server, attempt).await;

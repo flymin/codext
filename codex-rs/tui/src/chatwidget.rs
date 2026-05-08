@@ -334,9 +334,9 @@ use self::mcp_startup::McpStartupStatus;
 mod session_header;
 use self::session_header::SessionHeader;
 mod hooks;
-mod status_header;
 mod skills;
 mod slash_dispatch;
+mod status_header;
 use self::skills::collect_tool_mentions;
 use self::skills::find_app_mentions;
 use self::skills::find_skill_mentions_with_tool_mentions;
@@ -382,8 +382,7 @@ const USER_SHELL_COMMAND_HELP_TITLE: &str = "Prefix a command with ! to run it l
 const USER_SHELL_COMMAND_HELP_HINT: &str = "Example: !ls";
 const DEFAULT_OPENAI_BASE_URL: &str = "https://api.openai.com/v1";
 const GUARDIAN_REVIEW_FAILURE_PREFIX: &str = "Automatic approval review failed:";
-const DEFAULT_USAGE_LIMIT_RESUME_PROMPT: &str =
-    "The previous turn stopped because the active account hit a usage limit. Any pending auth reload has already been applied. Please continue the previous coding task from where it stopped, and use apply_patch for any required file edits.";
+const DEFAULT_USAGE_LIMIT_RESUME_PROMPT: &str = "The previous turn stopped because the active account hit a usage limit. Any pending auth reload has already been applied. Please continue the previous coding task from where it stopped, and use apply_patch for any required file edits.";
 const DEFAULT_STATUS_LINE_ITEMS: [&str; 5] = [
     "model-with-reasoning",
     "current-dir",
@@ -7013,16 +7012,14 @@ impl ChatWidget {
             .map(|message| message.text.clone())
             .into_iter()
             .collect();
-        queued_messages.extend(self
-            .queued_user_messages
-            .iter()
-            .enumerate()
-            .map(|(idx, message)| {
+        queued_messages.extend(self.queued_user_messages.iter().enumerate().map(
+            |(idx, message)| {
                 user_message_preview_text(
                     message,
                     self.queued_user_message_history_records.get(idx),
                 )
-            }));
+            },
+        ));
         let pending_steers: Vec<String> = self
             .pending_steers
             .iter()
@@ -9498,7 +9495,8 @@ impl ChatWidget {
         {
             if let Some(effort) = effort {
                 mask.reasoning_effort = Some(Some(effort));
-            } else if let Some(plan_mask) = collaboration_modes::plan_mask(self.model_catalog.as_ref())
+            } else if let Some(plan_mask) =
+                collaboration_modes::plan_mask(self.model_catalog.as_ref())
             {
                 mask.reasoning_effort = plan_mask.reasoning_effort;
             }
@@ -10512,9 +10510,9 @@ impl ChatWidget {
                     /*hint*/ None,
                 ));
             }
-            Err(error) => {
-                self.add_to_history(history_cell::new_error_event(format!("Copy failed: {error}")))
-            }
+            Err(error) => self.add_to_history(history_cell::new_error_event(format!(
+                "Copy failed: {error}"
+            ))),
         }
         self.request_redraw();
         true
